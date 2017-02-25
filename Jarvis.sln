@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jarvis", "Jarvis\Jarvis.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherAssignment", "WeatherAssignment\WeatherAssignment.csproj", "{5D8C75ED-BA2A-4878-95A0-EE7D4A29D12B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CognitiveServicesTTS", "CSharp\CognitiveServicesTTS.csproj", "{2D0DB2A1-0A63-472E-ADB5-13FDC50D7350}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{5D8C75ED-BA2A-4878-95A0-EE7D4A29D12B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D8C75ED-BA2A-4878-95A0-EE7D4A29D12B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D8C75ED-BA2A-4878-95A0-EE7D4A29D12B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D0DB2A1-0A63-472E-ADB5-13FDC50D7350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D0DB2A1-0A63-472E-ADB5-13FDC50D7350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D0DB2A1-0A63-472E-ADB5-13FDC50D7350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D0DB2A1-0A63-472E-ADB5-13FDC50D7350}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

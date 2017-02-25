@@ -29,13 +29,13 @@ namespace Jarvis
 
         private void frmWeb_Load(object sender, EventArgs e)
         {
+
             webBrowser1.Navigate(new Uri(youtube));
 
             webBrowser1.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(webBrowser_DocumentCompleted);
 
-
             //HtmlElement btnElement = webBrowser1.Document.All.GetElementsByName("btnG")[0];
-            //btnElement.InvokeMember("click"); 
+            //btnElement.InvokeMember("click");
 
         }
 

@@ -49,6 +49,7 @@
             this.Name = "frmWeb";
             this.Text = "frmWeb";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmWeb_FormClosing);
+            this.Load += new System.EventHandler(this.frmWeb_Load);
             this.ResumeLayout(false);
 
         }

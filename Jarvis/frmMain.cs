@@ -27,6 +27,7 @@ using Microsoft.CognitiveServices.SpeechRecognition;
 using System.Net;
 using WeatherAssignment;
 using Emgu.CV.Util;
+using TTSSample;
 
 namespace Jarvis
 {
@@ -69,7 +70,7 @@ namespace Jarvis
             }
             resetMaxedOut();
 
-
+            boxApiKey.Text = "04473eab9ed146139f04fc5d9b6bf724";
 
         }
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -175,6 +176,8 @@ namespace Jarvis
             framePause = 0;
             //Initialize the FrameGraber event
             Application.Idle += new EventHandler(FrameGrabber_Parrellel);
+
+            sendCode(RESET, RESET, RESET_BALL, RESET);
         }
         private void stopCapture()
         {
@@ -243,6 +246,14 @@ namespace Jarvis
                                 if (framePause++ == frameLimit)
                                 {
                                     rotateHand(middleX, middleY);
+                                    framePause = 0;
+                                }
+                            }
+                            else
+                            {
+                                if (framePause++ == frameLimit)
+                                {
+                                    sendCode(MOVE_LEFT, PAUSE, PAUSE, PAUSE);
                                     framePause = 0;
                                 }
                             }
@@ -990,6 +1001,10 @@ namespace Jarvis
         {
             switch (command)
             {
+                case "Say hello to the jury.":
+                    writeCommand("Say hello to the jury");
+                    TextToSpeech.Speak("Hello everyone");
+                    break;
                 case "Pick up the blue ball.":
                     blueBallMode = true;
                     writeCommand("Pick up the blue ball");

@@ -117,6 +117,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CSharp\CognitiveServicesTTS.csproj">
+      <Project>{2d0db2a1-0a63-472e-adb5-13fdc50d7350}</Project>
+      <Name>CognitiveServicesTTS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WeatherAssignment\WeatherAssignment.csproj">
       <Project>{5d8c75ed-ba2a-4878-95a0-ee7d4a29d12b}</Project>
       <Name>WeatherAssignment</Name>
