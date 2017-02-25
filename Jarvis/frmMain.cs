@@ -28,6 +28,8 @@ using System.Net;
 using WeatherAssignment;
 using Emgu.CV.Util;
 using TTSSample;
+using Microsoft.ProjectOxford.SpeakerRecognition;
+using Microsoft.ProjectOxford.SpeakerRecognition.Contract.Identification;
 
 namespace Jarvis
 {
@@ -1039,17 +1041,88 @@ namespace Jarvis
                     writeCommand("Play Shakira");
                     break;
 
+                case "Who am I?":
+                    writeCommand("Who am I?");
+                    string _selectedFile = "C:\\Users\\Mac\\Desktop\\check.wav";
+                    identifySpeaker(_selectedFile);
+                    break;
+
                 default:
                     writeCommand("Command not recognised");
                     break;
             }
         }
 
+        private async void identifySpeaker(string _selectedFile)
+        {
+            SpeakerIdentificationServiceClient _serviceClient;
+            OperationLocation processPollingLocation;
+
+            _serviceClient = new SpeakerIdentificationServiceClient("e5404f463d1242ad8ce61c5422afc4bf");
+
+
+            Profile[] allProfiles = await _serviceClient.GetProfilesAsync();
+            Guid[] testProfileIds = new Guid[allProfiles.Length];
+            for (int i = 0; i < testProfileIds.Length; i++)
+            {
+                testProfileIds[i] = allProfiles[i].ProfileId;
+            }
+            using (Stream audioStream = File.OpenRead(_selectedFile))
+            {
+                _selectedFile = "";
+                processPollingLocation = await _serviceClient.IdentifyAsync(audioStream, testProfileIds, true);
+            }
+
+            IdentificationOperation identificationResponse = null;
+            int numOfRetries = 10;
+            TimeSpan timeBetweenRetries = TimeSpan.FromSeconds(5.0);
+            while (numOfRetries > 0)
+            {
+                await Task.Delay(timeBetweenRetries);
+                identificationResponse = await _serviceClient.CheckIdentificationStatusAsync(processPollingLocation);
+
+                if (identificationResponse.Status == Status.Succeeded)
+                {
+                    writeUser("User: " + getUser(identificationResponse.ProcessingResult.IdentifiedProfileId.ToString()));
+                }
+                else if (identificationResponse.Status == Status.Failed)
+                {
+                    writeUser("User: unknown");
+                }
+                numOfRetries--;
+            }
+            if (numOfRetries <= 0)
+            {
+                writeUser("User: unknown");
+            }
+
+
+
+        }
+        private string getUser(string id)
+        {
+            if (id.Equals("33d3a04c-88a2-4dfd-bb96-772e73ed49f9"))
+            {
+                return "Andrei";
+            }
+            else
+            {
+                return "unknown";
+            }
+        }
         private void writeCommand(string command)
         {
             Invoke(new MethodInvoker(() =>
             {
                 boxCommand.Text = command;
+            }));
+        }
+
+        private void writeUser(string user)
+        {
+            Invoke(new MethodInvoker(() =>
+            {
+                labelUser.Text = user;
             }));
         }
         #endregion

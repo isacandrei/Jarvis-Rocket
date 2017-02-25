@@ -53,6 +53,7 @@
             this.boxChangeImg = new System.Windows.Forms.CheckBox();
             this.boxManualHue = new System.Windows.Forms.CheckBox();
             this.boxHue = new System.Windows.Forms.NumericUpDown();
+            this.labelUser = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.imgBoxFace)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.boxHue)).BeginInit();
             this.SuspendLayout();
@@ -287,11 +288,21 @@
             0,
             0});
             // 
+            // labelUser
+            // 
+            this.labelUser.AutoSize = true;
+            this.labelUser.Location = new System.Drawing.Point(802, 399);
+            this.labelUser.Name = "labelUser";
+            this.labelUser.Size = new System.Drawing.Size(32, 13);
+            this.labelUser.TabIndex = 26;
+            this.labelUser.Text = "User:";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(932, 613);
+            this.Controls.Add(this.labelUser);
             this.Controls.Add(this.boxHue);
             this.Controls.Add(this.boxManualHue);
             this.Controls.Add(this.boxChangeImg);
@@ -352,6 +363,7 @@
         private System.Windows.Forms.CheckBox boxChangeImg;
         private System.Windows.Forms.CheckBox boxManualHue;
         private System.Windows.Forms.NumericUpDown boxHue;
+        private System.Windows.Forms.Label labelUser;
     }
 }
 
