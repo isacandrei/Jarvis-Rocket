@@ -54,6 +54,9 @@
     <Reference Include="MyoSharp">
       <HintPath>lib\MyoSharp.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>lib\NAudio.dll</HintPath>
+    </Reference>
     <Reference Include="SpeechClient">
       <HintPath>lib\SpeechClient.dll</HintPath>
     </Reference>
