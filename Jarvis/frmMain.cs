@@ -1022,7 +1022,7 @@ namespace Jarvis
 
         private void btnStopSpeech_Click(object sender, EventArgs e)
         {
-            //this.micClient.EndMicAndRecognition();
+            this.micClient.EndMicAndRecognition();
             //this.micClient = null;
             boxSpeech.Text = "";
             btnSpeech.Enabled = true;
