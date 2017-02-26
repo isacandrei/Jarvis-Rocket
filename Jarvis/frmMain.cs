@@ -28,6 +28,8 @@ using System.Net;
 using WeatherAssignment;
 using Emgu.CV.Util;
 using TTSSample;
+using Microsoft.ProjectOxford.SpeakerRecognition;
+using Microsoft.ProjectOxford.SpeakerRecognition.Contract.Identification;
 
 namespace Jarvis
 {
@@ -825,6 +827,10 @@ namespace Jarvis
 
         private string authenticationUri = "";
 
+        NAudio.Wave.WaveFileWriter waveWriter = null;
+        NAudio.Wave.DirectSoundOut waveOut = null;
+        NAudio.Wave.WaveIn sourceStream = null;
+
         private void btnSpeech_Click(object sender, EventArgs e)
         {
             if (this.checkSubscriptionKey())
@@ -837,7 +843,33 @@ namespace Jarvis
                 }
 
                 this.micClient.StartMicAndRecognition();
+
+                //if (identify)
+                //{
+                    string fileName = "C:\\Users\\Mac\\Desktop\\check.wav";
+
+                    int deviceNumber = 0;
+
+                    sourceStream = new NAudio.Wave.WaveIn();
+
+                    sourceStream.DeviceNumber = deviceNumber;
+
+                    sourceStream.WaveFormat = new NAudio.Wave.WaveFormat(16000, 1);
+
+                    sourceStream.DataAvailable += new EventHandler<NAudio.Wave.WaveInEventArgs>(sourceStream_DataAvailable);
+                    waveWriter = new NAudio.Wave.WaveFileWriter(fileName, sourceStream.WaveFormat);
+
+                    sourceStream.StartRecording();
+                //}
+                
             }
+        }
+        private void sourceStream_DataAvailable(object sender, NAudio.Wave.WaveInEventArgs e)
+        {
+            if (waveWriter == null) return;
+
+            waveWriter.WriteData(e.Buffer, 0, e.BytesRecorded);
+            waveWriter.Flush();
         }
 
         private void CreateMicrophoneRecoClient()
@@ -991,7 +1023,36 @@ namespace Jarvis
         private void btnStopSpeech_Click(object sender, EventArgs e)
         {
             this.micClient.EndMicAndRecognition();
+            //this.micClient = null;
             boxSpeech.Text = "";
+            btnSpeech.Enabled = true;
+            
+            
+                if (waveOut != null)
+                {
+                    waveOut.Stop();
+                    waveOut.Dispose();
+                    waveOut = null;
+                }
+                if (sourceStream != null)
+                {
+                    sourceStream.StopRecording();
+                    sourceStream.Dispose();
+                    sourceStream = null;
+                }
+                if (waveWriter != null)
+                {
+                    waveWriter.Dispose();
+                    waveWriter = null;
+                }
+
+                string _selectedFile = "C:\\Users\\Mac\\Desktop\\check.wav";
+
+            if (identify)
+            {
+                identifySpeaker(_selectedFile);
+            }
+            
 
         }
         #endregion
@@ -1004,52 +1065,144 @@ namespace Jarvis
                 case "Say hello to the jury.":
                     writeCommand("Say hello to the jury");
                     TextToSpeech.Speak("Hello everyone");
+                    identify = false;
+
                     break;
                 case "Pick up the blue ball.":
                     blueBallMode = true;
+                    identify = false;
+
                     writeCommand("Pick up the blue ball");
                     initialiseCaptureBall();
                     break;
                 case "Pick up the red ball.":
                     blueBallMode = false;
+                    identify = false;
+
                     writeCommand("Pick up the red ball");
                     initialiseCaptureBall();
                     break;
                 case "Give me the ball.":
+                    identify = false;
+
                     writeCommand("Give me the ball");
                     break;
                 case "Give the ball to Andrei.":
+                    identify = false;
+
                     writeCommand("Give Andrei the ball");
 
                     break;
                 case "Give the ball to Andre.":
+                    identify = false;
+
                     writeCommand("Give Andrei the ball");
 
                     break;
                 case "Give the ball to Vlad.":
+                    identify = false;
+
                     writeCommand("Give Vlad the ball");
 
                     break;
                 case "Drop the ball.":
+                    identify = false;
+
                     writeCommand("Drop the ball");
 
                     break;
 
                 case "Play Shakira.":
+                    identify = false;
+
                     writeCommand("Play Shakira");
                     break;
 
+                case "Who am I?":
+                    writeCommand("Who am I?");
+                    identify = true;
+                    break;
+
                 default:
+                    identify = false;
+
                     writeCommand("Command not recognised");
                     break;
             }
         }
+        bool identify = false;
+        private async void identifySpeaker(string _selectedFile)
+        {
+            SpeakerIdentificationServiceClient _serviceClient;
+            OperationLocation processPollingLocation;
 
+            _serviceClient = new SpeakerIdentificationServiceClient("e5404f463d1242ad8ce61c5422afc4bf");
+
+
+            Profile[] allProfiles = await _serviceClient.GetProfilesAsync();
+            Guid[] testProfileIds = new Guid[allProfiles.Length];
+            for (int i = 0; i < testProfileIds.Length; i++)
+            {
+                testProfileIds[i] = allProfiles[i].ProfileId;
+            }
+            using (Stream audioStream = File.OpenRead(_selectedFile))
+            {
+                _selectedFile = "";
+                processPollingLocation = await _serviceClient.IdentifyAsync(audioStream, testProfileIds, true);
+            }
+
+            IdentificationOperation identificationResponse = null;
+            int numOfRetries = 10;
+            TimeSpan timeBetweenRetries = TimeSpan.FromSeconds(5.0);
+            while (numOfRetries > 0)
+            {
+                await Task.Delay(timeBetweenRetries);
+                identificationResponse = await _serviceClient.CheckIdentificationStatusAsync(processPollingLocation);
+
+                if (identificationResponse.Status == Status.Succeeded)
+                {
+                    writeUser("User: " + getUser(identificationResponse.ProcessingResult.IdentifiedProfileId.ToString()));
+                    break;
+                }
+                else if (identificationResponse.Status == Status.Failed)
+                {
+                    writeUser("User: unknown");
+                    break;
+                }
+                numOfRetries--;
+            }
+            if (numOfRetries <= 0)
+            {
+                writeUser("User: unknown");
+            }
+
+
+
+        }
+        private string getUser(string id)
+        {
+            if (id.Equals("33d3a04c-88a2-4dfd-bb96-772e73ed49f9"))
+            {
+                return "Andrei";
+            }
+            else
+            {
+                return "unknown";
+            }
+        }
         private void writeCommand(string command)
         {
             Invoke(new MethodInvoker(() =>
             {
                 boxCommand.Text = command;
+            }));
+        }
+
+        private void writeUser(string user)
+        {
+            Invoke(new MethodInvoker(() =>
+            {
+                labelUser.Text = user;
             }));
         }
         #endregion
