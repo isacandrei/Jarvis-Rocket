@@ -1,2 +1,2 @@
 # Jarvis-Rocket
-MakeMIT Jarvis Robotic Assistant Project
+A smart robotic arm developed in under 15 hours. The main use case is recognising between red/blue objects, picking up the object, detecting and recognising faces and handing the object to the specified person, all controlled by vocal commands. Multiple technologies have been integrated, such as: OpenCV, Microsoft Cognitive Services Speech and Speaker Recognition API’s, Open Weather API and Arduino.
